@@ -12,7 +12,7 @@ function f!(dx, x, p, t)
     return nothing
 end
 
-x0 = StateVectors.StateVector{Float64}(pos = 2, vel = 2, E = 1, q=4, θ=2)   # zeros
+x0 = StateVector{Float64}(pos = 2, vel = 2, E = 1, q=4, θ=2)   # zeros
 x0.pos .= [1.0, 0.0]
 x0.vel .= [0.0, 1.0]
 x0.q .= q_identity()
@@ -25,10 +25,10 @@ q_multiply!(x0.q, q1, q2)
 
 @btime q_multiply!($x0.q, $q1, $q2)
 # using Test
-# mk() = StateVectors.StateVector{Float64}(pos = 2, vel = 2, E = 1)
+# mk() = StateVector{Float64}(pos = 2, vel = 2, E = 1)
 # @inferred mk()
 
-M = StateVectors.StateMatrix{Float64}(x0)
+M = StateMatrix{Float64}(x0)
 M[:pos, :q] .= randn.()
 
 @inferred KalmanFilterEngine.NavStateEKF(0.0, x0, M, 6)
