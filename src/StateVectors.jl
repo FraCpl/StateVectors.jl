@@ -15,6 +15,17 @@ Minimal named-component vector and matrix for use with DifferentialEquations.jl.
     P = StateMatrix{Float64}((pos = 2, vel = 2))         # or give sizes
     J[:pos, :vel] .= [1.0 0.0; 0.0 1.0]                  # block views
     J[:E, :E] = 0.5                                      # scalar x scalar
+
+    # Rectangular matrices:
+    x = StateVector{Float64}(pos = 2, vel = 2, E = 1)    # 5 states
+    z = StateVector{Float64}(y = 2)                      # 2 measurements
+
+    H = StateMatrix{Float64}(z, x)                       # 2×5: rows from z, cols from x
+    H[:meas, :pos] .= [1.0 0.0; 0.0 1.0]
+
+    # or
+    Q = StateMatrix{Float64}((y = 2,), (pos = 2, vel = 2, E = 1))
+
 """
 module StateVectors
 
@@ -97,6 +108,10 @@ Base.@propagate_inbounds function Base.setindex!(x::StateVector, v, i::Int)
     getdata(x)[i] = v
     return x
 end
+
+Base.getindex(x::StateVector, s::Symbol) = getproperty(x, s)
+Base.setindex!(x::StateVector, v, s::Symbol) = (setproperty!(x, s, v); x)
+Base.view(x::StateVector, s::Symbol) = view(getdata(x), _index(x, s))
 
 # similar / copy keep the layout (DiffEq calls these constantly)
 function Base.similar(x::StateVector{T,A,Ax}, ::Type{S}) where {T,A,Ax,S}
