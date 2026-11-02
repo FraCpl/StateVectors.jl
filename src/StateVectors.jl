@@ -231,10 +231,8 @@ Base.summary(io::IO, M::StateMatrix) =
 Base.BroadcastStyle(::Type{<:StateVector}) = Broadcast.ArrayStyle{StateVector}()
 Base.BroadcastStyle(::Type{<:StateMatrix}) = Broadcast.ArrayStyle{StateMatrix}()
 # vector with matrix -> matrix style
-Base.BroadcastStyle(::Broadcast.ArrayStyle{StateVector},
-                    s::Broadcast.ArrayStyle{StateMatrix}) = s
-Base.BroadcastStyle(s::Broadcast.ArrayStyle{StateMatrix},
-                    ::Broadcast.ArrayStyle{StateVector}) = s
+Base.BroadcastStyle(::Broadcast.ArrayStyle{StateVector}, s::Broadcast.ArrayStyle{StateMatrix}) = s
+Base.BroadcastStyle(s::Broadcast.ArrayStyle{StateMatrix}, ::Broadcast.ArrayStyle{StateVector}) = s
 
 # find the first argument of type C in a (nested) Broadcasted
 _find(::Type{C}, bc::Broadcast.Broadcasted) where {C} = _find(C, bc.args)
